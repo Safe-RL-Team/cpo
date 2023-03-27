@@ -5,6 +5,8 @@ import numpy as np
 from core.agent import Agent
 
 #specify location of model in model_path to test a model
+#specify location of the project
+loc = '/home/pauel'
 
 def test_CartPole(render=False, model_path=None, runs=10):
 
@@ -23,7 +25,7 @@ def test_CartPole(render=False, model_path=None, runs=10):
     observation, info = env.reset(seed=42)
 
     if model_path == None:
-        model_path = '/home/pauel/PycharmProjects/Sapana/PyTorch-CPO/assets/learned_models/CPO/CartPole_new_kl/2023-03-23-exp-3-CartPole-v1/best_training_model.p'
+        model_path = loc + '/' +'PycharmProjects/PyTorch-CPO/assets/CP_default.p'
 
     try:
         policy_net, _, _ = pickle.load(open(model_path, "rb"))
@@ -67,7 +69,7 @@ def test_LunarLander(render=False, model_path=None, runs = 10, record_speed=Fals
     observation, info = env.reset(seed=42)
 
     if model_path == None:
-        model_path = '/home/pauel/PycharmProjects/Sapana/PyTorch-CPO/assets/learned_models/CPO/LunarLander_manyIts/2023-03-26-exp-1-LunarLander-v2/best_training_model.p'
+        model_path = loc + '/' +'PycharmProjects/PyTorch-CPO/assets/LL_default.p'
 
     try:
         policy_net, _, _ = pickle.load(open(model_path, "rb"))
