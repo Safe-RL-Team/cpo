@@ -6,17 +6,17 @@ project_loc = '/home/pauel/PycharmProjects/Sapana'
 
 #LunarLander
 #LunarLander, velocity, iterations 100, limit 20, delta 0.01, CG iterations 10, Batch-size 4000
-LunarLander1 = 'PyTorch-CPO/assets/learned_models/CPO/LunarLander_CG_vel/2023-03-22-exp-8-LunarLander-v2/intermediate_model/model_iter_100.p'
+LunarLander1 = 'PyTorch-CPO/assets/LL1.p'
 #low kl (0.005), velocity, iterations 100, limit 20, delta 0.005, CG iterations 10, Batch-size 4000
-LunarLander2 = 'PyTorch-CPO/assets/learned_models/CPO/LunarLander_new_kl/2023-03-23-exp-1-LunarLander-v2/best_training_model.p'
+LunarLander2 = 'PyTorch-CPO/assets/LL2.p'
 
 #CartPole
 #CartPole, stay mid, iterations 500, limit 3, delta 0.01, CG iterations 10, Batch-size 4000
-CartPole1 = 'PyTorch-CPO/assets/learned_models/CPO/CartPole_CG_pos/2023-03-22-exp-11-CartPole-v1/model.p'
+CartPole1 = 'PyTorch-CPO/assets/CP1_model.p'
 #CartPole, stay mid, iterations 500, limit 3, delta 0.01, CG iterations 10, Batch-size 4000
-CartPole2 = 'PyTorch-CPO/assets/learned_models/CPO/CartPole_manyIts/2023-03-27-exp-2-CartPole-v1/intermediate_model/model_iter_110.p'
+CartPole2 = 'PyTorch-CPO/assets/CP2_model.p'
 #CartPole, stay mid, iterations 100, limit 6, delta 0.01, CG iterations 10, Batch-size 4000
-CartPoleLeft = 'PyTorch-CPO/assets/learned_models/CPO/CartPole_CG_goleft/2023-03-22-exp-11-CartPole-v1/model.p'
+CartPoleLeft = 'PyTorch-CPO/assets/CP_left.p'
 
 def presentation():
 
