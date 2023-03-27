@@ -1,13 +1,9 @@
-### Based on the implementation of Sapana Chadhaury
-### Slightly adjusted
-
 import os
 import numpy as np
 import pickle
 import csv
 
 from datetime import date
-
 today = date.today()
 
 
@@ -20,6 +16,16 @@ class save_info(object):
 
     def create_all_paths(self):
         """create all the paths to save learned models/data"""
+
+        # model for best training reward saving path
+        self.model_training_saving_path = os.path.join(self.assets_dir, self.saving_path, 'best_training_model.p')
+        if not os.path.exists(os.path.dirname(self.model_training_saving_path)):
+            try:
+                os.makedirs(os.path.dirname(self.model_training_saving_path))
+            except OSError as exc:  # Guard against race condition
+                if exc.errno != errno.EEXIST:
+                    raise
+
         # model saving path
         self.model_saving_path = os.path.join(self.assets_dir, self.saving_path, 'model.p')
         if not os.path.exists(os.path.dirname(self.model_saving_path)):
@@ -76,11 +82,9 @@ class save_info(object):
         self.eval_avg_R_std_saving_path = os.path.join(self.assets_dir, self.saving_path, 'eval_avg_R_std.p')
 
     def dump_lists(self, num_of_steps, num_of_episodes, total_num_episodes, total_num_steps, rewards_std,
-                   env_avg_reward, p_loss_list, eval_avg_reward, eval_avg_reward_std):
+                   env_avg_reward, v_loss_list, p_loss_list, eval_avg_reward, eval_avg_reward_std):
 
         # dump expert_avg_reward, num_of_steps, num_of_episodes
-        # removed avg_reward as it was not available in mainloop
-        # pickle.dump(avg_reward, open(os.path.join(self.assets_dir, self.avg_reward_saving_path),'wb'))
         pickle.dump(num_of_steps,
                     open(os.path.join(self.assets_dir, self.num_of_steps_saving_path), 'wb'))
         pickle.dump(num_of_episodes,
@@ -93,6 +97,8 @@ class save_info(object):
                     open(os.path.join(self.assets_dir, self.rewards_std_saving_path), 'wb'))
         pickle.dump(env_avg_reward,
                     open(os.path.join(self.assets_dir, self.env_avg_reward_saving_path), 'wb'))
+        pickle.dump(v_loss_list,
+                    open(os.path.join(self.assets_dir, self.true_v_loss_list_saving_path), 'wb'))
         pickle.dump(p_loss_list,
                     open(os.path.join(self.assets_dir, self.p_loss_list_saving_path), 'wb'))
         pickle.dump(eval_avg_reward,
@@ -100,11 +106,15 @@ class save_info(object):
         pickle.dump(eval_avg_reward_std,
                     open(os.path.join(self.assets_dir, self.eval_avg_R_std_saving_path), 'wb'))
 
-    def save_models(self, policy_net, running_state):
-        pickle.dump((policy_net, running_state),
+    def save_models(self, policy_net, value_net, running_state):
+        pickle.dump((policy_net, value_net, running_state),
                     open(os.path.join(self.assets_dir, self.model_saving_path), 'wb'))
 
-    def save_info(self, p_loss_list, constrain_value_list, residual1=None, residual2=None, time=None):
+    def save_training_models(self, policy_net, running_state):
+        pickle.dump((policy_net, running_state),
+                    open(os.path.join(self.assets_dir, self.model_training_saving_path), 'wb'))
+
+    def save_info(self, reward, training_reward, constrain_value_list, info_list, time_list):
 
         path = os.path.join(self.assets_dir, self.saving_path, 'losses.csv')
 
@@ -112,18 +122,31 @@ class save_info(object):
             writer = csv.writer(f)
 
             # write data
-            writer.writerow(p_loss_list)
+            writer.writerow(reward)
             writer.writerow(constrain_value_list)
 
-            if residual1 != None:
-                writer.writerow(residual1)
-            if residual2 != None:
-                writer.writerow(residual2)
-            if time != None:
-                writer.writerow(time)
+            info_list = np.array(info_list).T
+            for info in info_list:
+                writer.writerow(info)
 
+            writer.writerow(time_list)
+            writer.writerow(training_reward)
 
-    def save_intermediate_models(self, policy_net, running_state, i_iter):
-        pickle.dump((policy_net, running_state), open(
+    def save_parameters(self, d_k, max_kl, cg_iter, max_iter, batch_size):
+
+        path = os.path.join(self.assets_dir, self.saving_path, 'parameters.csv')
+        field_names = ['max iterations', 'constraint limit', 'trust region size (max_kl)', 'CG iterations',
+                       'batch size']
+        parameters = {'max iterations': max_iter, 'constraint limit': d_k, 'trust region size (max_kl)': max_kl,
+                      'CG iterations': cg_iter, 'batch size': batch_size}
+
+        with open(path, 'w', encoding='UTF8', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=field_names)
+
+            # write data
+            writer.writerow(parameters)
+
+    def save_intermediate_models(self, policy_net, value_net, running_state, i_iter):
+        pickle.dump((policy_net, value_net, running_state), open(
             os.path.join(self.assets_dir, self.intermediate_model_saving_path, 'model_iter_{}.p'.format(i_iter + 1)),
             'wb'))

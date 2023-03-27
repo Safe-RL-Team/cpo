@@ -60,7 +60,6 @@ def collect_samples(pid, queue, env, policy, custom_reward,
                     action = policy.select_action(state_var)[0].numpy()
             #print(action)
             action = int(action) if policy.is_disc_action else action.astype(np.float64)
-            #print(env.step(action))
             next_state, reward, done, _, _ = env.step(action)
             env_reward_episode += reward
             env_reward_episode_list_1.append(reward)

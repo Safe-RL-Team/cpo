@@ -26,7 +26,6 @@ class DiscretePolicy(nn.Module):
 
     def forward(self, x):
         for affine in self.affine_layers:
-            #print(affine.weight)
             x = self.activation(affine(x))
 
         action_prob = torch.softmax(self.action_head(x), dim=1)
@@ -42,12 +41,6 @@ class DiscretePolicy(nn.Module):
         action_prob0 = action_prob1.detach()
         kl = action_prob0 * (torch.log(action_prob0) - torch.log(action_prob1))
         return kl.sum(1, keepdim=True)
-
-    def kl(self, x):
-        action_prob1 = self.forward(x)
-        action_prob0 = action_prob1.detach()
-        kl = action_prob0 * (torch.log(action_prob0) - torch.log(action_prob1))
-        return kl.sum(1, keepdim=True).mean()
 
     def get_log_prob(self, x, actions):
         action_prob = self.forward(x)

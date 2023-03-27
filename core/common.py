@@ -23,26 +23,6 @@ def estimate_advantages(rewards, masks, values, gamma, tau, device):
     advantages, returns = to_device(device, advantages, returns)
     return advantages, returns
 
-def estimate_advantages_own(rewards, masks, gamma, tau, device):
-    rewards, masks = to_device(torch.device('cpu'), rewards, masks)
-    tensor_type = type(rewards)
-    deltas = tensor_type(rewards.size(0), 1)
-    advantages = tensor_type(rewards.size(0), 1)
-
-    prev_value = 0
-    prev_advantage = 0
-    for i in reversed(range(rewards.size(0))):
-        deltas[i] = rewards[i] + gamma * masks[i]
-        advantages[i] = deltas[i] + gamma * tau * prev_advantage * masks[i]
-
-        prev_advantage = advantages[i, 0]
-
-    advantages = (advantages - advantages.mean()) / advantages.std()
-    #print('1', type(advantages))
-    #advantages = to_device(device, advantages)
-    #print('2', type(advantages))
-    return advantages
-
 
 def estimate_constraint_value(costs, masks, gamma, device):
     costs, masks = to_device(torch.device('cpu'), costs, masks)

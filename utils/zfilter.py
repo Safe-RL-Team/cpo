@@ -11,7 +11,6 @@ class RunningStat(object):
         self._S = np.zeros(shape)
 
     def push(self, x):
-        #print(x, 'jojo')
         if type(x) is tuple:
             x = x[0]
         x = np.asarray(x)
@@ -64,10 +63,8 @@ class ZFilter:
         if update and not self.fix:
             self.rs.push(x)
         if self.demean:
-            #print(x, self.rs.mean, 'hello')
             if type(x) is tuple:
                 x = x[0]
-            #print(x, 'yes')
             x = x - self.rs.mean
         if self.destd:
             x = x / (self.rs.std + 1e-8)

@@ -38,12 +38,14 @@ def parse_all_arguments():
                         help='random seed (default: 1)')
     
     # batch size and iteration number
-    parser.add_argument('--min-batch-size', type=int, default=2000, metavar='N',
+    parser.add_argument('--min-batch-size', type=int, default=4000, metavar='N',
                         help='minimal batch size per PPO update (default: 2048)')
-    parser.add_argument('--max-batch-size', type=int, default=2000, metavar='N',
+    parser.add_argument('--max-batch-size', type=int, default=4000, metavar='N',
                         help='maximum batch size per PPO update (default: 2000)')
     parser.add_argument('--max-iter-num', type=int, default=500, metavar='N',
                         help='maximal number of main iterations (default: 500)')
+    parser.add_argument('--cg-iter', type=int, default=10, metavar='N',
+                        help='iterations of CG method for computing H^-1*b, H^-1*g')
     
     # logging and saving models
     parser.add_argument('--log-interval', type=int, default=1, metavar='N',
@@ -52,18 +54,20 @@ def parse_all_arguments():
                         help="interval between saving model (default: 0, means don't save)")
     parser.add_argument('--save-intermediate-model', type=int, default=10, metavar='N',
                         help="intermediate model saving interval (default: 0, means don't save)")
+    parser.add_argument('--save-condition-number', default=False, metavar='N',
+                        help="recording the condition number of the hessian of the KL-divergence H, default False")
        
     
     if parser.parse_args().algo_name == "CPO":
-        parser.add_argument('--max-kl', type=float, default=1e-2, metavar='G',
+        parser.add_argument('--max-kl', type=float, default=0.05, metavar='G',
                         help='max kl value (default: 1e-2)')
         parser.add_argument('--damping', type=float, default=1e-2, metavar='G',
                         help='damping (default: 1e-2)')
-        parser.add_argument('--max-constraint', type=float, default=1e-3, metavar='G',
+        parser.add_argument('--max-constraint', type=float, default=9, metavar='G',
                         help='max constraint value (default: 1e-2)')
         parser.add_argument('--annealing_factor', type=float, default=1e-6, metavar='G',
                         help='annealing factor of constraint (default: 1e-2)')
-        parser.add_argument('--anneal', default=True,
+        parser.add_argument('--anneal', default=False,
                         help='Should the constraint be annealed or not')
         parser.add_argument('--grad-norm', default=False,
                         help='Should the norm of policy gradient be taken (default: False)')    
